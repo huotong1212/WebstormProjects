@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="../vue.js"></script>
+    <script src="../vue-router.js"></script>
+</head>
+<body>
+<div id="app" >
+    <App></App>
+</div>
+
+<script>
+    //让vue使用vue-router
+    Vue.use(VueRouter)
+
+    //创建Main对象
+    var Main = {
+        template: `
+            <h2>我是主页面1</h2>
+        `,
+        created(){
+            // 当引入vuerouter后，会将这2个对象挂载到根部vue实例化对象中
+            // 而组件具有继承性，所有这个组件也能拿到这2个对象
+            console.log('main1-----------')
+            console.log(this.$router) //vuerouter对象
+            console.log(this.$route) //创建的routes路由
+            // console.log(this.$route.query.userId) //创建的routes路由
+        }
+    }
+
+    //创建Main对象
+    var Main2 = {
+        template: `
+            <h2>我是主页面2</h2>
+        `,
+        created(){
+            // 当引入vuerouter后，会将这2个对象挂载到根部vue实例化对象中
+            // 而组件具有继承性，所有这个组件也能拿到这2个对象
+            console.log('main2-----------')
+            console.log(this.$router) //vuerouter对象
+            console.log(this.$route) //创建的routes路由
+            // console.log(this.$route.query.userId) //创建的routes路由
+        }
+    }
+
+    //创建Login对象
+    var Login = {
+        template: `
+            <div>
+                    <h2>我是登录页面</h2>
+                    <router-link to="/login/1/main">主页1</router-link>
+                    <router-link :to="{name:'main2',params:{id:1}}">主页2</router-link>
+                    <router-view></router-view>
+<!--                    <Main></Main>-->
+            </div>
+        `,
+        created(){
+            // 当引入vuerouter后，会将这2个对象挂载到根部vue实例化对象中
+            // 而组件具有继承性，所有这个组件也能拿到这2个对象
+            console.log(this.$router) //vuerouter对象
+            console.log(this.$route) //创建的routes路由
+            console.log(this.$route.params.id) //创建的routes路由
+        },
+        components:{
+            Main,
+            Main2
+        }
+    }
+
+    //创建Register对象
+    var Register = {
+        template: `
+            <h2>我是注册页面</h2>
+        `,
+        created(){
+            // 当引入vuerouter后，会将这2个对象挂载到根部vue实例化对象中
+            // 而组件具有继承性，所有这个组件也能拿到这2个对象
+            console.log(this.$router) //vuerouter对象
+            console.log(this.$route) //创建的routes路由
+            console.log(this.$route.query.userId) //创建的routes路由
+        }
+    }
+
+    //创建vue-router对象
+    var router = new VueRouter({
+        //配置路由
+        routes:[
+            //路由匹配规则,路径加子组件名
+            //动态路由参数，以:开头
+            {
+                path:"/login/:id",
+                name:"login",
+                component:Login,
+                children:[
+                    {
+                        path:"main",
+                        name:"main",
+                        component:Main,
+                    },
+                    {
+                        path:"main2",
+                        name:"main2",
+                        component:Main2,
+                    }
+                ]
+            },
+            {
+                path:"/register",
+                name:"register",
+                component:Register,
+            }
+        ]
+    })
+
+
+    // 使用router-link 他最终会被渲染成a标签
+    // router-view 相当于一个占位符，用于展示被匹配路径匹配到的组件中的内容(路由组件的出口)
+    var App = {
+        template: `<div>
+                         <router-link :to="{name:'login',params:{id:1}}">登录</router-link>
+                         <router-link :to="{path:'/register',query:{userId:2}}">注册</router-link>
+                         <router-view></router-view>
+                    </div>`,
+    }
+
+    // 创建根实例
+    new Vue({
+        el: '#app',
+        data:{
+            messagec:'我是祖父组件的数据',
+        },
+        components: {
+            App
+        },
+        //吧router交给根组件管理
+        router:router
+        // template:`<App message="hello" :texts="messagec" @getHeaderData="getDataMethod"></App>`
+    })
+</script>
+</body>
+</html>

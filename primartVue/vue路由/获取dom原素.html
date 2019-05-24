@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+<div id="app" >
+    <App></App>
+</div>
+
+<script>
+    var App2 = {
+        template: `<div>
+                        <h1>我是App2</h1>
+                        <button ref="btn">按钮3</button>
+                    </div>`,
+    }
+    // 注册
+    var App = {
+        data(){
+          return{
+              isShow:false
+          }
+        },
+        template: `<div>
+                        <h1>我是App</h1>
+                        <button ref="btn">按钮1</button>
+                        <App2 ref="ap2"></App2>
+                        <input type="text" v-show="isShow" ref="input">
+                    </div>`,
+        components:{
+            App2
+        },
+        mounted(){
+
+            // 如果给标签绑定ref="xxx"，可以使用this.$refs.xxx获取原生的domjs对象
+            console.log(this.$refs.btn)
+            // 如果给组件绑定ref="xxx"，可以使用this.$refs.xxx获取这个组件对象
+            console.log(this.$refs.ap2)
+
+            this.isShow = true
+            //在dom更新循环结束后的执行的回调函数，
+            // 在修改数据之后使用此方法在回调中获取更新后的dom
+            this.$nextTick(()=>{
+                    console.log(this)
+                    this.$refs.input.focus()
+                }
+            )
+        }
+    }
+
+    // 创建根实例
+    new Vue({
+        el: '#app',
+        data:{
+            messagec:'我是祖父组件的数据',
+        },
+        components: {
+            App
+        },
+
+        // template:`<App message="hello" :texts="messagec" @getHeaderData="getDataMethod"></App>`
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+<div id="app">
+
+</div>
+<script>
+
+    Vue.component('myLi',{
+        template:`
+            <li>
+            第一个坑<slot name="two"></slot>
+            第二个坑<slot name="three"></slot>
+            </li>
+        `
+    })
+
+    var App = {
+        template:
+            `<div>
+                <ul>
+                    <myLi>
+                    <h2 slot="two">占2</h2>
+                    <h3 slot="three">占3</h3>
+                    </myLi>
+
+                </ul>
+             </div>`
+    }
+
+    new Vue({
+        // el: '#app',
+        el: '#app',
+        data: {
+            msg: 'Hello World',
+            message: 'Runoob!'
+        },
+        components: {
+            App      //把上面的App组件挂在到这个Vue对象下面,也可以使用字典形式
+        },
+        template: '<App/>'
+    })
+</script>
+
+</body>
+</html>

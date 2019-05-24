@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <span>{{ 1+1 }}</span>
+    <keep-alive>
+        <App v-if="isShow"></App>
+    </keep-alive>
+    <button @click="showApp">toggle组件</button>
+    <button @click="handle">更新</button>
+    <h1>{{msg}}</h1>
+</div>
+<script>
+    var App = {
+        template:`<div id="child">我是入口组件</div>`,
+        beforeDestroy:function () {
+            // 销毁之前
+            console.log('before Destroy......')
+            console.log(this)
+        },
+        destroyed:function () {
+            // 销毁之后
+            console.log('Destroyed......')
+            console.log(this)
+        },
+        activated:function () {
+            console.log("组件被激活了...")
+        },
+        deactivated:function () {
+            console.log("组件被停用了...")
+        }
+    }
+
+    new Vue({
+        el: '#app',
+        data:{
+            msg : 'Hello World',
+            isShow: true
+        },
+        components:{
+            App
+        },
+
+        methods:{
+            handle:function () {
+              this.msg = "Hello update"
+            },
+            showApp:function () {
+                this.isShow = !this.isShow
+            }
+        },
+
+        beforeCreate:function(){
+            //组件创建之前
+            console.log(this)  //对象已经创建了，但是还没有开始加载数据
+            console.log(this.msg) //undefined
+        },
+        created:function () {
+            //组件创建之后
+            console.log(this.msg)
+            //使用该组件就会调用created方法
+            // 一般用来发送ajax请求，操作后端数据
+        },
+        beforeMount:function () {
+            // 取不到，vue还没有开始渲染
+            console.log(document.getElementById("child"))
+        },
+        mounted:function () {
+            // 取到了，vue已经渲染过了
+            // 应用，操作DOM
+            console.log(document.getElementById("child"))
+        },
+        beforeUpdate:function () {
+            // 在更新DOM前调用
+            // 获取原始的DOM
+            console.log('before update......')
+            console.log(document.getElementById('app').innerHTML)
+        },
+        updated:function () {
+            // 更新DOM之后调用 获取更新之后的DOM
+            // (必须是写在body中的标签，单纯的改变msg数据并不会触发)
+            console.log('updated......')
+            console.log(document.getElementById('app').innerHTML)
+        },
+
+    })
+
+
+</script>
+</body>
+</html>

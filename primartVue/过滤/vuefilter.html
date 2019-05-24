@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <span>{{ msg }}</span>
+</div>
+<script>
+    var App = {
+        data(){
+            return{
+                price : 0,
+                mask : 'hello faker'
+            }
+        },
+
+        template: `<div>
+
+        <div>我是入口组件</div>
+        <input type="number" v-model="price">
+        <h3>{{price | myCurrent}}</h3>
+        <h4>{{ mask| myReverse }}</h4>
+         <h4>{{ mask| myReverse("clearlove") }}</h4>
+                    </div>`,
+        filters:{
+            // 1.声明过滤器
+            // 2.使用过滤器{{ 数据|过滤器的名字 }}
+            myCurrent:function (value) {
+                return value+"元"
+            }
+        }
+    }
+
+    // 全局过滤器
+    Vue.filter('myReverse',function (value,arg) {
+        return (arg+" "+value).split('').reverse().join('')
+    })
+
+    new Vue({
+        // el: '#app',
+        el: '#app',
+        data: {
+            msg: 'Hello World',
+            message: 'Runoob!'
+        },
+        components: {
+            App      //把上面的App组件挂在到这个Vue对象下面,也可以使用字典形式
+        },
+        template: '<App/>'
+    })
+    // console.log(vm)
+
+</script>
+
+</body>
+</html>

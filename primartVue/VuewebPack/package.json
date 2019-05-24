@@ -1,0 +1,21 @@
+{
+  "name": "vuewebpack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "webpack-cli": "^3.3.2"
+  },
+  "devDependencies": {
+    "css-loader": "^2.1.1",
+    "style-loader": "^0.23.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack ./main.js -o build.js",
+    "dev": "set type=dev&webpack --watch",
+    "dev1": "webpack --config ./webpack.config.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

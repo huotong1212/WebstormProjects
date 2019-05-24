@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+<div id="app" >
+    <h2 ></h2>
+    <App message="hello" :texts="messagec" @getheaderdata="getDataMethod"></App>
+    <App2></App2>
+</div>
+
+<script>
+    var bus = new Vue()
+
+    var Vheader = {
+        data() {
+            return {
+                msg: '我是App下的Vheader--',
+                tect: "传递给App2"
+            }
+        },
+
+        template: `<div>
+                <div>{{ msg }}</div>
+                <input type="text" v-model="tect" @input="sendApp2(tect)">
+            </div>`,
+        methods:{
+            sendApp2:function (val) {
+                bus.$emit('globalEvent',val)
+            }
+        }
+
+    }
+
+    // 注册
+    var App = {
+        // 声明 props
+        props: ['message'],
+        template: `<div>
+                        <h1>我是App</h1>
+                        <Vheader></Vheader>
+                    </div>`,
+        components:{
+            Vheader,
+        },
+    }
+
+    var App2 = {
+        data(){
+            return {
+                headermsg : ''
+            }
+        },
+        // 声明 props
+        props: ['message'],
+        template: `<div>
+                        <h1>我是App2</h1>
+                        <input type="text" v-model="headermsg"/>
+                    </div>`,
+        mounted() {
+            bus.$on('globalEvent',(val)=>{
+                    this.headermsg = val
+                }
+            )
+        }
+    }
+
+    // 创建根实例
+    new Vue({
+        el: '#app',
+        data:{
+            messagec:'我是祖父组件的数据',
+        },
+        components: {
+            App,
+            App2
+        },
+
+        // template:`<App message="hello" :texts="messagec" @getHeaderData="getDataMethod"></App>`
+    })
+</script>
+</body>
+</html>

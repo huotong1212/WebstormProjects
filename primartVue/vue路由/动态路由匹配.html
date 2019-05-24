@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+    <script src="../vue-router.js"></script>
+</head>
+<body>
+<div id="app">
+    <App></App>
+</div>
+
+<script type="text/javascript">
+    Vue.use(VueRouter)
+
+    var music = {
+        template: `<div><h2>我是music</h2>
+                         <router-link :to="{name:'huayu',params:{id:1}}">华语音乐</router-link>
+                         <router-link :to="{name:'yueyu',params:{id:2}}">粤语音乐</router-link>
+                         <router-link to="./foreign">外语音乐</router-link>
+                         <router-view></router-view>
+                    </div>`,
+        create(){
+            console.log("音乐组件创建了......")
+        },
+        mounted(){
+            console.log("音乐组件渲染了......")
+        },
+        destroy(){
+            console.log("音乐组件销毁了......")
+        }
+    }
+
+    var movie = {
+        template: `<div @click="clickHandler">我是movie</div>`,
+        methods:{
+            clickHandler(e){
+                e.target.style.color = "red"
+            }
+        },
+        create(){
+            console.log("电影组件创建了......")
+        },
+        mounted(){
+            console.log("电影组件渲染了......")
+        },
+        destroy(){
+            console.log("电影组件销毁了......")
+        }
+    }
+
+    var huayu = {
+        data(){
+          return{
+              msg:''
+          }
+        },
+        template:`<div>
+            <h5 v-if="msg===1">华语音乐</h5>
+            <h5 v-else-if="msg==2">粤语音乐</h5>
+                   </div>`,
+        created(){
+            console.log('huayu created...........')
+        },
+        watch:{
+            '$route'(to,from){
+                console.log(to)  //从哪里来 routes对象
+                console.log(from) //到哪里去
+                console.log('watch......')
+                this.msg = to.params.id
+                //发送ajax请求
+            }
+        }
+    }
+
+    var foreign = {
+        template:`<h5>English Songs</h5>`,
+    }
+
+    var router = new VueRouter({
+        routes:[
+            {
+                path:'/music',
+                name:"music",
+                component:music,
+                children:[
+                    {
+                        path:'huayu/:id',
+                        name:"huayu",
+                        component:huayu,
+                    },
+                    {
+                        path:'foreign',
+                        name:"foreign",
+                        component:foreign,
+                    },
+                    {
+                        path:'yueyu',
+                        name:"yueyu",
+                        component:huayu,
+                    },
+                ]
+            },
+            {
+                path:'/movie',
+                name:"movie",
+                component:movie
+            }
+        ]
+    })
+
+    var App = {
+        data(){
+          return{
+
+          }
+        },
+        template:`<div>
+                    <h2>我是App组件</h2>
+                    <router-link :to="{name:'music'}">音乐</router-link>
+                    <router-link to="/movie">电影</router-link>
+                    <keep-alive>
+                        <router-view></router-view>
+                    </keep-alive>
+                    </div>`,
+    }
+
+    new Vue({
+        el: '#app',
+        components:{
+            App
+        },
+        router:router
+    })
+
+
+</script>
+
+</body>
+</html>

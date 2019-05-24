@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <span>{{ msg }}</span>
+</div>
+<script>
+    Vue.component('Vbtn', {
+            template: `<button><slot>按钮</slot><button/>`
+        }
+    ) //全局组件
+
+    var Vcontent = {
+        template: `<div>
+         <div>我是内容组件</div>
+         <Vbtn>登录</Vbtn>
+        </div>`
+
+    }
+
+    var Vasider = {
+        template: `<div>我是侧边栏组件</div>`
+
+    }
+
+
+    var Vheader = {
+        data() {
+            return {
+                msg: '我是头部组件--'
+            }
+        },
+
+        template: `<div>
+                <div>{{ msg }}</div>
+                <Vbtn/>
+            </div>`
+
+    }
+
+
+    var App = {
+        template: `<div>
+                <Vheader/>
+                <Vasider/>
+        <div>我是入口组件</div>
+             <Vcontent/>
+                    </div>`,
+
+        components: {
+            Vheader,      //把上面的App组件挂在到这个Vue对象下面,也可以使用字典形式
+            Vasider,
+            Vcontent
+        },
+    }
+
+    new Vue({
+        // el: '#app',
+        el: '#app',
+        data: {
+            msg: 'Hello World',
+            message: 'Runoob!'
+        },
+        components: {
+            App      //把上面的App组件挂在到这个Vue对象下面,也可以使用字典形式
+        },
+        template: '<App/>'
+    })
+    // console.log(vm)
+</script>
+</body>
+</html>

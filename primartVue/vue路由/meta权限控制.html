@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="../vue.js"></script>
+    <script src="../vue-router.js"></script>
+</head>
+<body>
+<div id="app" >
+    <App></App>
+
+</div>
+
+<script>
+    //让vue使用vue-router
+    Vue.use(VueRouter)
+
+    //创建Login对象
+    var Login = {
+        data(){
+            return{
+                name:'',
+                pwd:''
+            }
+        },
+        template: `
+                <div>
+                    <h2>我是登录页面</h2>
+                    用户名：<input type="text" v-model="name"/>
+                    密码：<input type="text" v-model="pwd"/>
+                    <button @click="login">登录</button>
+                </div>
+        `,
+        methods:{
+            login(){
+                //设置登录信息
+                localStorage.setItem('user',{name:this.name,pwd:this.pwd})
+                // 跳转到博客页面
+                // 编程式导航
+                this.$router.push({
+                    path:"/blog"
+                })
+            }
+        }
+    }
+
+    //创建Register对象
+    var Blog = {
+        template: `
+            <h2>我是博客页面</h2>
+        `
+    }
+
+    //Home 首页
+    var Home = {
+        template: `
+            <h2>我是主页</h2>
+        `
+    }
+
+    //创建vue-router对象
+    var router = new VueRouter({
+        //配置路由
+        routes:[
+            { //重定向
+              path:"/",
+              redirect:"/home"
+            },
+            {
+                path:"/home",
+                name:"home",
+                component:Home
+            },
+
+            //路由匹配规则,路径加子组件名
+            {
+                path:"/login",
+                name:"login",
+                component:Login,
+
+            },
+            {
+                path:"/blog",
+                name:"blog",
+                component:Blog,
+                //给未来的路由做权限控制
+                meta:{
+                    // 证明，用户访问该组件的时候需要登录
+                    auth:true
+                }
+            }
+        ]
+    })
+
+    //在每次路由切换的时候都会执行
+    // 注意必须写next方法，否则会hang住
+    router.beforeEach((to,from,next)=>{
+        console.log(to)
+        console.log(from)
+
+        if(to.meta.auth){
+            //用户点击了博客链接，验证是否登录
+            if(localStorage.getItem('user')){
+                //用户已经登录，直接放行
+                next()
+            }else {
+                next('/login')
+            }
+        }else {
+            // 是其他路由，直接放行
+            next()
+        }
+    })
+
+
+    // 使用router-link 他最终会被渲染成a标签
+    // router-view 相当于一个占位符，用于展示被匹配路径匹配到的组件中的内容(路由组件的出口)
+    var App = {
+        template: `<div>
+                         <router-link :to="{name:'home'}">首页</router-link>
+                         <router-link :to="{name:'blog'}">我的博客</router-link>
+                         <router-view></router-view>
+                    </div>`,
+    }
+
+    // 创建根实例
+    new Vue({
+        el: '#app',
+        data:{
+            messagec:'',
+        },
+        components: {
+            App
+        },
+        //吧router交给根组件管理
+        router:router
+    })
+</script>
+</body>
+</html>

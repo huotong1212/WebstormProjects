@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../vue.js"></script>
+    <script src="../vue-router.js"></script>
+    <script src="../axios.min.js"></script>
+    <link href="../style-1.css" type="text/css" rel="stylesheet"/>
+</head>
+<body>
+<div id="app">
+    <App></App>
+</div>
+<script>
+    Vue.prototype.$axios = axios
+
+    var App = {
+        data(){
+          return{
+              isShow:false
+          }
+        },
+        template:`<div><h1>我是入口组件</h1>
+                    <button @click="sendAjax">axios发送GET请求</button>
+                    <button @click="sendPost">axios发送POST请求</button>
+                    <div v-show="isShow">
+                        <div class="text">Loading...</div>
+                        <div class="spinner">
+                          <div class="rect1"></div>
+                          <div class="rect2"></div>
+                          <div class="rect3"></div>
+                          <div class="rect4"></div>
+                          <div class="rect5"></div>
+                        </div>
+                        </div>
+                    </div>`,
+        methods:{
+            sendAjax(){
+                //添加请求拦截器
+                this.$axios.interceptors.request.use((config)=>{
+                    console.log('---config',config)
+                    var token = localStorage.getItem('token')
+                    if(token){
+                        config.headers['token'] = token
+                    }
+                    this.isShow = true
+                    // setTimeout(function () {
+                    //     console.log('timeout')
+                    // },1000)  此操作是异步的
+                    return config
+                },function (err) {
+                    return Promise.reject(err)
+                })
+
+                // 添加响应拦截器
+                this.$axios.interceptors.response.use((response)=>{
+                    // 对响应数据做点什么
+                    console.log('response---',response)
+                    if(response.data.token){
+                        localStorage.setItem('token',response.data.token)
+                    }
+                    this.isShow = false
+                    return response;
+                }, function (error) {
+                    // 对响应错误做点什么
+                    return Promise.reject(error);
+                });
+
+                this.$axios.get('http://127.0.0.1:8000/fs/ajax1.html?p=123')
+                    .then(res=>{
+                        // console.log(res)
+                        // console.log(res.data)
+                    }).catch(err=>{
+                    console.log(err)
+                })
+            },
+            sendPost(){
+                this.$axios.defaults.baseURL='http://127.0.0.1:8000/'
+                this.$axios.post('fs/f1.html',{
+                    user: 'Fred',
+                    pwd: 'Flintstone',
+                    email:'1233@qq.com',
+                    age:'20'
+                })
+                    .then(res=>{
+                        console.log(res)
+                        console.log(res.data)
+                    }).catch(err=>{
+                    console.log(err)
+                })
+            }
+
+        }
+    }
+
+    new Vue({
+        el: '#app',
+        data:{
+            msg : 'Hello World',
+        },
+        components:{
+            App
+        }
+    })
+</script>
+</body>
+</html>

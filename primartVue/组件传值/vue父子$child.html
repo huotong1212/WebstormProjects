@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue 测试实例 - 菜鸟教程(runoob.com)</title>
+    <script src="../vue.js"></script>
+</head>
+<body>
+<div id="app">
+    <h2>我是父组件</h2>
+    <input type="text" v-model="sork" @input="changeValue(sork)"/>
+
+    <child message="hello!"></child>
+
+</div>
+
+<script>
+    // 注册
+    Vue.component('child', {
+        data(){
+            return{
+                msg:''
+            }
+        },
+        // 声明 props
+        props: ['message'],
+
+        // 同样也可以在 vm 实例中像 “this.message” 这样使用
+        template: `<div>
+                        <h2>我是子组件</h2>
+                        <input type="text" v-model="msg" @input="changeMsg"/>
+                    </div>`,
+       methods: {
+           changeMsg(){
+               this.$parent.sork = this.msg
+           }
+       }
+    })
+    // 创建根实例
+    new Vue({
+        el: '#app',
+        data:{
+            sork:'父亲的数据'
+        },
+        methods:{
+          changeValue(val) {
+              this.$children[0].msg = val
+          }
+        }
+    })
+</script>
+</body>
+</html>
